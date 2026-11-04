@@ -1,6 +1,6 @@
 ---
 name: humanize
-description: Run a task through humanize (hmz), the user's agent-flow orchestrator that drives Claude Code, Codex and other agent CLIs in loops such as actor+reviewer (rlar). Use when the user says "use humanize", "use hmz", "run it in hmz", "rlar this", or asks for a task to be done by an implementer agent with a separate reviewer agent.
+description: Run a coding or research task through humanize (hmz), an agent-flow orchestrator that drives Claude Code, Codex and other agent CLIs in loops such as actor + reviewer (rlar). Use when the user says "use humanize", "use hmz", "run it in hmz", "rlar this", or wants a task done by an implementer agent checked by a separate reviewer agent, a long unattended agent loop (hours to days), or Claude implementing while Codex reviews. Not for rewriting text to sound more human.
 ---
 
 # humanize (hmz)
@@ -13,7 +13,7 @@ directory, `hmz exec` runs a flow headless, `hmz web` serves every workspace's r
 browser. Written against 0.2.2; this alpha changes often, so trust `hmz exec --help` over
 this file.
 
-## The user's defaults
+## The user's defaults (edit for your setup)
 
 | Setting | Default |
 |---|---|
@@ -38,8 +38,9 @@ hmz exec -f rlar \
 1. **Pre-flight.**
    - Look up the directory in `~/.hmz/settings.yaml` under `workspaces:`. If it has an entry,
      prefer its flow, agents, envs and budget over the defaults above.
-   - Check every model and effort you pass exists in `~/.hmz/models/<cli>.json`. A bad spec
-     fails the run.
+   - Check every model and effort you pass exists in `~/.hmz/models/<cli>.json`. hmz doesn't
+     validate specs up front: a bad one fails only on the first turn that uses it, so a wrong
+     reviewer model in `rlar` surfaces after the actor's whole first turn.
    - Check `git status`. hmz agents run with approvals bypassed. If the repo has uncommitted
      work you didn't create, or it can change live systems (infrastructure, deploy scripts,
      credentials), say so and suggest a git worktree before starting.
@@ -118,10 +119,10 @@ read the docstring for roles and params before using one. To get any flow's full
 
 - Every run is an epic under `~/.hmz/epics/<cwd-with-slashes-as-dashes>/<timestamp>/`, and
   `epic.jsonl` holds the summary events: `began` (flow, task), `opened` (each agent session),
-  `usage` (cost, output_tokens, seconds), and `ended`, whose `how` is `done` (the flow's own
-  stop condition was met) or `stopped`.
-- The `--json` log has the full stream. Read its last events for the reviewer's verdict or
-  the budget limit that ended the run.
+  `usage` (cost, output_tokens, seconds), and `ended` with a `how` field: `done` when the
+  flow's own stop condition was met, `stopped` otherwise (other values may exist).
+- The `--json` log has the full event stream, including errors such as
+  `HarnessUnrecoverable` when a turn fails. Read its tail for why the run ended.
 - Report the outcome, the cost and duration from `usage`, and your own diff check.
 
 ## Settings notes
