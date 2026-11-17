@@ -19,7 +19,7 @@ this file.
 |---|---|
 | Flow | `rlar`: Claude implements, Codex reviews |
 | Actor | `claude/claude-opus-5-5:high` |
-| Reviewer | `codex/gpt-6.1-sol:high` (sometimes `:ultra`) |
+| Reviewer | `codex/gpt-6.2-sol:high` (sometimes `:ultra`) |
 | Budget | `budget.duration=1d`, with no cost or token cap |
 
 Use these unless the user says otherwise, or the workspace has saved defaults (below).
@@ -28,7 +28,7 @@ Don't ask about the budget.
 ```sh
 hmz exec -f rlar \
   -a actor=claude/claude-opus-5-5:high \
-  -a reviewer=codex/gpt-6.1-sol:high \
+  -a reviewer=codex/gpt-6.2-sol:high \
   -p budget.duration=1d \
   --json "$(cat "$TASK")" > "$LOG" 2>&1
 ```
